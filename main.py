@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from string import Template
+
 import random
 import math
 
@@ -65,29 +67,38 @@ def generate_data_size(size=None):
     return tuple([select, convert_size(select)])
 
 def generate_question(question=None):
-  
+
   if question is None:
     select = random.choice(list(questions.keys()))
     ask = questions.get(select)
+    print(ask["template"].substitute(**ask))
+
     return ask
+  
+  if question:
+    ask = questions.get(question)
+    print(ask["template"].substitute(**ask))
 
   return questions.get(question)
 
 questions = {
   1: {
     "ask": "Calculate the approximate QPS and throughput",
+    "template": Template("Ask: $ask \nUsers: $users \nRequests: $requests \nData: $data"),
     "users": generate_users_number("small"),
     "requests": generate_requests_per_day(),
     "data": generate_data_size(),
     },
   2: {
     "ask": "Caculate the throughput required",
+    "template": Template("Ask: $ask \nUsers: $users \nRequests: $requests \nData: $data"),
     "users": generate_users_number("big"),
     "requests": generate_requests_per_day(),
     "data": generate_data_size(size="tiny"),
   },
   3: {
-    "ask": "Calculate the storage requirement",
+    "ask": "Calculate the storage requirements",
+    "template": Template("Ask: $ask \nUsers: $users \nRequests: $requests \nData: $data"),
     "users": generate_users_number(),
     "requests": generate_requests_per_day(),
     "data": generate_data_size("tiny"),
@@ -96,6 +107,5 @@ questions = {
 
 }
 
-
 if __name__ == '__main__':
-  print(generate_question())
+  generate_question()
